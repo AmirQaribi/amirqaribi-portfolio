@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://amirqaribi.com/sitemap.xml
+Sitemap: https://amirqaribi.ir/sitemap.xml

@@ -10,45 +10,27 @@ import { ChevronDown } from 'lucide-react';
 
 const SLIDE_COUNT = 4;
 
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return isMobile;
-};
-
-const useIsTablet = () => {
-  const [isTablet, setIsTablet] = useState(
-    window.innerWidth >= 768 && window.innerWidth < 1024
-  );
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return isTablet;
-};
+const getScreenSize = () => ({
+  isMobile: window.innerWidth < 768,
+  isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
+});
 
 const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [introActive, setIntroActive] = useState(true);
+  const [{ isMobile, isTablet }, setScreenSize] = useState(getScreenSize());
   const touchStartY = useRef(0);
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(getScreenSize());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isDesktop = !isMobile && !isTablet;
   const isMobileOrTablet = isMobile || isTablet;
 

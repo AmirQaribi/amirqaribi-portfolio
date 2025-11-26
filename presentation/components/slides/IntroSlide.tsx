@@ -8,8 +8,8 @@ interface IntroSlideProps {
 
 export const IntroSlide: React.FC<IntroSlideProps> = ({ isActive, onNext }) => {
   return (
-    <div className={`w-full h-full flex flex-col items-center justify-center ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-light tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 mb-8 text-center animate-fade-in">
+    <div className={`w-full h-full flex flex-col gap-y-4 items-center justify-center ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-light leading-30 text-transparent bg-clip-text bg-gradient-to-r h-20 lg:h-24 from-white via-gray-200 to-gray-500 text-center animate-fade-in">
         Are you looking for Amir?
       </h1>
       

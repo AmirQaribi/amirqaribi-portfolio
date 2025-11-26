@@ -23,9 +23,6 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ isActive, onNext }) => {
         </span>
       </button>
 
-      <p className="absolute bottom-12 text-sm text-gray-500 animate-pulse-slow">
-        Click to discover
-      </p>
     </div>
   );
 };

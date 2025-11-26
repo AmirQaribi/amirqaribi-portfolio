@@ -25,33 +25,33 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
         
         {/* Text Content - Centered on mobile/tablet if needed, or left aligned */}
         <div className="space-y-6 order-2 lg:order-1 text-center lg:text-left">
-          <div className="inline-block px-3 py-1 bg-fluent-accent/10 border border-fluent-accent/20 rounded-full text-fluent-accent text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2">
+          <div className="inline-block px-3 py-1 bg-fluent-accent/10 border border-fluent-accent/20 rounded-full text-fluent-accent text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2 cursor-default">
             Profile
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight cursor-default">
             Hello,<br/>{data.greeting}
           </h2>
-          <h3 className="text-lg sm:text-xl md:text-2xl text-gray-400 font-light">
+          <h3 className="text-lg sm:text-xl md:text-2xl text-gray-400 font-light cursor-default">
             {data.role}<br/>{data.role2}<br/>{data.role3}
           </h3>
-          <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed border-l-4 border-fluent-accent pl-4 mx-auto lg:mx-0 text-left max-w-prose">
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed border-l-4 border-fluent-accent pl-4 mx-auto lg:mx-0 text-left max-w-prose cursor-default">
             {data.description}
           </p>
           
           <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4">
             {data.stats.map((stat, i) => (
-              <div key={i} className="p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm text-center">
-                <div className="text-lg sm:text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
-                <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wide">{stat.label}</div>
+              <div key={i} className="p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm text-center transition-all duration-300 hover:bg-white/10 hover:border-fluent-accent/40 hover:shadow-lg hover:shadow-fluent-accent/20 hover:-translate-y-1 cursor-default">
+                <div className="text-lg sm:text-2xl md:text-3xl font-bold text-white cursor-default">{stat.value}</div>
+                <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wide cursor-default">{stat.label}</div>
               </div>
             ))}
           </div>
 
           <div className="pt-4 flex flex-col lg:items-start items-center">
-            <h4 className="font-semibold text-base sm:text-lg mb-3 flex items-center gap-2 text-gray-200"><Award size={18} className="text-fluent-accent" /> Personal Skills</h4>
+            <h4 className="font-semibold text-base sm:text-lg mb-3 flex items-center gap-2 text-gray-200 cursor-default"><Award size={18} className="text-fluent-accent" /> Personal Skills</h4>
             <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
               {data.personalSkills.map(skill => (
-                <span key={skill} className="px-3 py-1 text-xs sm:text-sm bg-white/5 border border-white/10 rounded-full text-gray-300">
+                <span key={skill} className="px-3 py-1 text-xs sm:text-sm bg-white/5 border border-white/10 rounded-full text-gray-300 cursor-default">
                   {skill}
                 </span>
               ))}
@@ -59,12 +59,12 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
           </div>
           
           <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4 text-xs sm:text-sm text-gray-400 justify-center lg:justify-start">
-             <div className="flex items-center gap-2">
-                <MapPin size={16} className="text-gray-500" />
+             <div className="flex items-center gap-2 cursor-default">
+                <MapPin size={16} className="text-gray-500 cursor-default" />
                 {data.location}
              </div>
-             <div className="flex items-center gap-2">
-                <Mail size={16} className="text-gray-500" />
+             <div className="flex items-center gap-2 cursor-default">
+                <Mail size={16} className="text-gray-500 cursor-default" />
                 {data.email}
              </div>
           </div>
@@ -109,11 +109,11 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
             </div>
              
             {/* Floating Icons */}
-            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce">
-                <Code className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce cursor-default">
+                <Code className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 cursor-default" />
             </div>
-            <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce [animation-delay:'0.2s']">
-                <Cpu className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
+            <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce [animation-delay:'0.2s'] cursor-default">
+                <Cpu className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 cursor-default" />
             </div>
           </div>
         </div>

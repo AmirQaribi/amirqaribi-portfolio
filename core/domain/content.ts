@@ -1,5 +1,5 @@
 import { PortfolioContent } from './types';
-import { amirPortraitBase64 } from '../../assets/images/AmirPortrait';
+import { amirPortraitBase64,amirPortraithoverBase64 } from '../../assets/images/AmirPortrait';
 
 export const content: PortfolioContent = {
   intro: {
@@ -27,6 +27,7 @@ export const content: PortfolioContent = {
     location: "Tehran, Iran",
     email: "AmirQaribi@outlook.com",
     imageUrl: amirPortraitBase64,
+    imageHoverUrl: amirPortraithoverBase64,
   },
   skills: {
     title: "Technical Arsenal",

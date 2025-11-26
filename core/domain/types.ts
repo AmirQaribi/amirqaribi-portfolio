@@ -29,6 +29,7 @@ export interface IdentityContent {
   location: string;
   email: string;
   imageUrl: string;
+  imageHoverUrl: string;
 }
 
 export interface ContactLink {

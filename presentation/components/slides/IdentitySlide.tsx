@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { IdentityContent } from '../../../core/domain/types';
 import { Code, Cpu, Award, MapPin, Mail } from 'lucide-react';
 
@@ -9,6 +9,16 @@ interface Props {
 }
 
 export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
+  const [hovered, setHovered] = useState(false);
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div className={`w-full flex items-center justify-center transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
@@ -63,17 +73,37 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
 
         {/* Visual - Portrait */}
         <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-          <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+          <div
+            className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
             {/* Glowing background effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-fluent-accent/20 to-purple-600/20 rounded-full animate-pulse-slow blur-xl" />
             
             {/* Image container */}
-            <div className="absolute inset-2 sm:inset-4 animate-float">
-              <img 
-                src={data.imageUrl} 
-                alt="Amir Qaribi" 
-                className="w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]"
+            <div className="select-none absolute inset-2 sm:inset-4 animate-float relative overflow-hidden rounded-full w-full h-full">
+              {/* Base image (fades out on hover) */}
+              <img
+                src={data.imageUrl}
+                alt="Amir Qaribi"
+                onContextMenu={handleContextMenu}
+                onDragStart={handleDragStart}
+                className={`select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] transition-opacity duration-200 ease-in-out ${
+                  hovered ? 'opacity-0' : 'opacity-100'
+                }`}
               />
+              {/* Hover image (base64) */}
+              <img
+                src={data.imageHoverUrl}
+                alt="Amir hover"
+                onContextMenu={handleContextMenu}
+                onDragStart={handleDragStart}
+                className={`select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] transition-opacity duration-200 ease-in-out ${
+                  hovered ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+
                {/* Inner shadow/highlight */}
               <div className="absolute inset-0 rounded-full border-2 border-white/10 ring-1 ring-white/20 pointer-events-none" />
             </div>

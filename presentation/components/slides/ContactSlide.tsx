@@ -34,8 +34,8 @@ export const ContactSlide: React.FC<Props> = ({ isActive, data }) => {
             <div className="p-3 sm:p-4 bg-fluent-accent/10 rounded-full mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
               <DynamicIcon name={item.icon} className="w-6 h-6 sm:w-8 sm:h-8 text-fluent-accent" />
             </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-1 text-white cursor-default">{item.label}</h3>
-            <p className="text-xs sm:text-sm text-gray-400 group-hover:text-fluent-accent transition-colors break-all cursor-default">
+            <h3 className="text-base sm:text-lg font-semibold mb-1 text-white">{item.label}</h3>
+            <p className="text-xs sm:text-sm text-gray-400 group-hover:text-fluent-accent transition-colors break-all">
               {item.value}
             </p>
           </a>

@@ -9,7 +9,7 @@ interface IntroSlideProps {
 
 export const IntroSlide: React.FC<IntroSlideProps> = ({ isActive, onNext }) => {
   return (
-    <div className={`w-full h-full flex flex-col gap-y-8 items-center justify-center transition-opacity duration-700 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+    <div className={`w-full h-full flex flex-col gap-y-8 items-center justify-center transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       <h1 className="text-4xl sm:text-5xl md:text-6xl h-20 lg:text-7xl font-light leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 text-center animate-fade-in px-4 max-w-5xl cursor-default">
         Are you looking for Amir?
       </h1>

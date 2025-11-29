@@ -53,20 +53,46 @@ const App: React.FC = () => {
       identityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [isMobile, changeSlide]);
-
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (isMobile) return; 
-    e.preventDefault();
-    if (Math.abs(e.deltaY) > 25) {
-      changeSlide(e.deltaY > 0 ? 'next' : 'prev');
-    }
-  }, [changeSlide, isMobile]);
   
-  useEffect(() => {
-    if (isMobile) return;
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [handleWheel, isMobile]);
+const isScrolling = useRef(false); // Prevents multiple rapid triggers
+const handleWheel = useCallback((e: WheelEvent) => {
+  if (isMobile || isAnimating || isScrolling.current) {
+    e.preventDefault();
+    return;
+  }
+
+  // Ignore small movements (trackpad noise, etc.)
+  if (Math.abs(e.deltaY) < 30) return;
+
+  e.preventDefault();
+
+  // Lock scrolling immediately
+  isScrolling.current = true;
+
+  const direction = e.deltaY > 0 ? 'next' : 'prev';
+  changeSlide(direction);
+
+  // Re-enable after animation + small buffer (prevents double jump)
+  setTimeout(() => {
+    isScrolling.current = false;
+  }, 1100); // 1000ms animation + 100ms buffer
+}, [isMobile, isAnimating, changeSlide]);
+
+
+useEffect(() => {
+  if (isMobile) {
+    isScrolling.current = false; // Reset on mobile switch
+    return;
+  }
+
+  const wheelListener = (e: WheelEvent) => handleWheel(e);
+  window.addEventListener('wheel', wheelListener, { passive: false });
+
+  return () => {
+    window.removeEventListener('wheel', wheelListener);
+    isScrolling.current = false;
+  };
+}, [handleWheel, isMobile]);
 
   // Touch handlers for Desktop Swipe (only active if not mobile/tablet mode)
   const touchStartY = useRef(0);

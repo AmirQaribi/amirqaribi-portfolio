@@ -10,7 +10,7 @@ interface Props {
 
 export const SkillsSlide: React.FC<Props> = ({ isActive, data }) => {
   return (
-    <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+    <div className={`w-full flex flex-col items-center justify-center transition-all duration-300 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
       <div className="mb-8 md:mb-12 text-center max-w-3xl px-4">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 cursor-default">{data.title}</h2>
         <p className="text-gray-400 text-sm sm:text-base md:text-lg cursor-default">{data.description}</p>
@@ -21,7 +21,7 @@ export const SkillsSlide: React.FC<Props> = ({ isActive, data }) => {
           <div 
             key={category.name}
             className={`
-              p-5 sm:p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl transition-all duration-500
+              p-5 sm:p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl transition-all duration-300
               hover:bg-white/10 hover:border-fluent-accent/40 hover:shadow-lg hover:shadow-fluent-accent/20 hover:-translate-y-2 cursor-default
               ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
             `}

@@ -20,7 +20,7 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
   };
 
   return (
-    <div className={`w-full flex items-center justify-center transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+    <div className={`w-full flex items-center justify-center transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
         
         {/* Text Content - Centered on mobile/tablet if needed, or left aligned */}
@@ -64,8 +64,8 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
                 {data.location}
              </div>
              <div className="flex items-center gap-2 cursor-default">
-                <Mail size={16} className="text-gray-500 cursor-default" />
-                {data.email}
+                <Mail size={16} className="text-gray-500 cursor-default"/>
+                <a href="mailto:{data.email}">{data.email}</a>
              </div>
           </div>
 

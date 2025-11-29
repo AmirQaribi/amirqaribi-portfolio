@@ -1,6 +1,14 @@
 import { PortfolioContent } from './types';
 import { amirPortraitBase64,amirPortraithoverBase64 } from '../../assets/images/AmirPortrait';
 
+const startYear = 2017;
+const currentYear = new Date().getFullYear();
+const yearsDif = currentYear - startYear;
+
+const yearsExp = `${yearsDif}+`;
+const solutions = `${Math.ceil(yearsDif*6 / 10) * 10}+`;
+
+
 export const content: PortfolioContent = {
   intro: {
     question: "Are you looking for Amir?",
@@ -13,8 +21,8 @@ export const content: PortfolioContent = {
     role3: "Backend Engineer",
     description: "Passionate about creating innovative solutions that bridge technology and business needs. I specialize in building scalable web applications and AI-powered systems. With over four years of experience in Microsoft's CRM ecosystem, I'm an active developer and consultant for Dynamics 365, dedicated to enhancing business efficiency with top-notch technology.",
     stats: [
-      { label: "Years Exp.", value: "8+" },
-      { label: "Solutions", value: "50+" },
+      { label: "Years Exp.", value: yearsExp },
+      { label: "Solutions", value: solutions },
       { label: "Clients", value: "Global" }
     ],
     personalSkills: [

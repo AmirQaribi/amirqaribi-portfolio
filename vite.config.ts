@@ -18,29 +18,6 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      },
-      build: {
-        target: 'ES2020',
-        minify: 'terser',
-        terserOptions: {
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-          },
-          format: {
-            comments: false,
-          }
-        },
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              'lucide-react': ['lucide-react'],
-              'react-vendor': ['react', 'react-dom']
-            }
-          }
-        },
-        reportCompressedSize: false,
-        chunkSizeWarningLimit: 1000,
       }
     };
 });

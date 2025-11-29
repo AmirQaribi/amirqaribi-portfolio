@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { PortfolioContent } from '../../../core/domain/types';
 import { DynamicIcon } from '../ui/DynamicIcon';
 
@@ -8,7 +8,7 @@ interface Props {
   data: PortfolioContent['contact'];
 }
 
-export const ContactSlide: React.FC<Props> = ({ isActive, data }) => {
+const ContactSlideComponent: React.FC<Props> = ({ isActive, data }) => {
   return (
     <div className={`w-full flex flex-col items-center justify-center transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
       <div className="mb-8 md:mb-12 text-center max-w-3xl px-4">
@@ -65,3 +65,5 @@ export const ContactSlide: React.FC<Props> = ({ isActive, data }) => {
     </div>
   );
 };
+
+export const ContactSlide = memo(ContactSlideComponent);

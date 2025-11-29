@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import { IdentityContent } from '../../../core/domain/types';
 import { Code, Cpu, Award, MapPin, Mail } from 'lucide-react';
 
@@ -8,16 +8,24 @@ interface Props {
   data: IdentityContent;
 }
 
-export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
+const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
   const [hovered, setHovered] = useState(false);
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-  };
+  }, []);
 
-  const handleDragStart = (e: React.DragEvent) => {
+  const handleDragStart = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-  };
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHovered(false);
+  }, []);
 
   return (
     <div className={`w-full flex items-center justify-center transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
@@ -75,8 +83,8 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
         <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
           <div
             className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             {/* Glowing background effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-fluent-accent/20 to-purple-600/20 rounded-full animate-pulse-slow blur-xl" />
@@ -117,8 +125,9 @@ export const IdentitySlide: React.FC<Props> = ({ isActive, data }) => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
+
+export const IdentitySlide = memo(IdentitySlideComponent);

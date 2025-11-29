@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { IntroSlide } from './presentation/components/slides/IntroSlide';
 import { IdentitySlide } from './presentation/components/slides/IdentitySlide';
 import { SkillsSlide } from './presentation/components/slides/SkillsSlide';
@@ -18,18 +18,26 @@ const getScreenSize = () => ({
 const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [{ isMobile }, setScreenSize] = useState(getScreenSize());
+  const [isMobile, setIsMobile] = useState(getScreenSize().isMobile);
   
   // Refs for scrolling on mobile/tablet
   const identityRef = useRef<HTMLDivElement>(null);
+  const resizeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
-      setScreenSize(getScreenSize());
+      // Debounce resize events
+      if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
+      resizeTimeoutRef.current = window.setTimeout(() => {
+        setIsMobile(getScreenSize().isMobile);
+      }, 150);
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
+    };
   }, []);
 
   const changeSlide = useCallback((direction: 'next' | 'prev') => {
@@ -49,66 +57,69 @@ const App: React.FC = () => {
       changeSlide('next');
     } else {
       // Smooth scroll to identity section on mobile/tablet
-      // Using a small timeout to ensure layout is stable if needed, but usually direct call works
-      identityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      requestAnimationFrame(() => {
+        identityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     }
   }, [isMobile, changeSlide]);
   
-const isScrolling = useRef(false); // Prevents multiple rapid triggers
-const handleWheel = useCallback((e: WheelEvent) => {
-  if (isMobile || isAnimating || isScrolling.current) {
+  const isScrolling = useRef(false);
+  const scrollTimeoutRef = useRef<number | null>(null);
+  
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (isMobile || isAnimating || isScrolling.current) {
+      e.preventDefault();
+      return;
+    }
+
+    // Ignore small movements (trackpad noise, etc.)
+    if (Math.abs(e.deltaY) < 30) return;
+
     e.preventDefault();
-    return;
-  }
+    isScrolling.current = true;
+    const direction = e.deltaY > 0 ? 'next' : 'prev';
+    changeSlide(direction);
 
-  // Ignore small movements (trackpad noise, etc.)
-  if (Math.abs(e.deltaY) < 30) return;
-
-  e.preventDefault();
-
-  // Lock scrolling immediately
-  isScrolling.current = true;
-
-  const direction = e.deltaY > 0 ? 'next' : 'prev';
-  changeSlide(direction);
-
-  // Re-enable after animation + small buffer (prevents double jump)
-  setTimeout(() => {
-    isScrolling.current = false;
-  }, 1100); // 1000ms animation + 100ms buffer
-}, [isMobile, isAnimating, changeSlide]);
+    // Re-enable after animation + small buffer
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isScrolling.current = false;
+    }, 1100);
+  }, [isMobile, isAnimating, changeSlide]);
 
 
-useEffect(() => {
-  if (isMobile) {
-    isScrolling.current = false; // Reset on mobile switch
-    return;
-  }
+  useEffect(() => {
+    if (isMobile) {
+      isScrolling.current = false;
+      return;
+    }
 
-  const wheelListener = (e: WheelEvent) => handleWheel(e);
-  window.addEventListener('wheel', wheelListener, { passive: false });
+    const wheelListener = (e: WheelEvent) => handleWheel(e);
+    window.addEventListener('wheel', wheelListener, { passive: false });
 
-  return () => {
-    window.removeEventListener('wheel', wheelListener);
-    isScrolling.current = false;
-  };
-}, [handleWheel, isMobile]);
+    return () => {
+      window.removeEventListener('wheel', wheelListener);
+      isScrolling.current = false;
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, [handleWheel, isMobile]);
 
   // Touch handlers for Desktop Swipe (only active if not mobile/tablet mode)
   const touchStartY = useRef(0);
-  const handleTouchStart = (e: React.TouchEvent) => {
+  
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (isMobile) return;
     touchStartY.current = e.touches[0].clientY;
-  };
+  }, [isMobile]);
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (isMobile) return;
     const touchEndY = e.changedTouches[0].clientY;
     const diff = touchStartY.current - touchEndY;
     if (Math.abs(diff) > 50) {
       changeSlide(diff > 0 ? 'next' : 'prev');
     }
-  };
+  }, [isMobile, changeSlide]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -126,18 +137,28 @@ useEffect(() => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [changeSlide, isMobile]);
   
-  const goToSlide = (slideIndex: number) => {
+  const animationTimeoutRef = useRef<number | null>(null);
+  
+  const goToSlide = useCallback((slideIndex: number) => {
     if (isAnimating || slideIndex === currentSlide || isMobile) return;
     setIsAnimating(true);
     setCurrentSlide(slideIndex);
-    setTimeout(() => setIsAnimating(false), 1000);
-  };
+    if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
+    animationTimeoutRef.current = window.setTimeout(() => setIsAnimating(false), 1000);
+  }, [isAnimating, currentSlide, isMobile]);
 
   // On mobile/tablet: h-screen + overflow-y-auto + scrollbar-hide creates a scrollable container 
   // that hides the browser scrollbar while allowing scroll.
-  const mainContainerClasses = `relative w-full bg-fluent-bg text-white font-sans selection:bg-fluent-accent selection:text-black h-screen ${
+  const mainContainerClasses = useMemo(() => `relative w-full bg-fluent-bg text-white font-sans selection:bg-fluent-accent selection:text-black h-screen ${
     !isMobile ? 'overflow-hidden' : 'overflow-y-auto scrollbar-hide'
-  }`;
+  }`, [isMobile]);
+
+  const slideTransformStyle = useMemo(() => ({
+    transform: !isMobile ? `translateY(-${currentSlide * 100}vh)` : undefined
+  }), [isMobile, currentSlide]);
+
+  const showNavigation = useMemo(() => !isMobile, [isMobile]);
+  const showChevron = useMemo(() => !isMobile && currentSlide < SLIDE_COUNT - 1, [isMobile, currentSlide]);
 
   return (
     <div 
@@ -153,7 +174,7 @@ useEffect(() => {
       <main className={`relative z-10 w-full ${!isMobile ? 'h-full' : ''}`}>
         <div 
           className={`w-full ${!isMobile ? 'h-full transition-transform duration-1000 ease-in-out' : 'flex flex-col gap-y-32 pb-32'}`}
-          style={!isMobile ? { transform: `translateY(-${currentSlide * 100}vh)` } : {}}
+          style={slideTransformStyle}
         >
           {/* Intro Section */}
           <section className="w-full h-screen flex items-center justify-center p-4 relative shrink-0">
@@ -177,14 +198,14 @@ useEffect(() => {
         </div>
       </main>
 
-      {!isMobile && (
+      {showNavigation && (
         <>
           <Navigation 
             totalSlides={SLIDE_COUNT} 
             currentSlide={currentSlide} 
             onSelect={goToSlide} 
           />
-          {currentSlide < SLIDE_COUNT - 1 && (
+          {showChevron && (
             <div 
               className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
               onClick={() => changeSlide('next')}

@@ -6,6 +6,36 @@ interface BackgroundEffectsProps {
   isArticleMode: boolean;
 }
 
+// Add keyframe animations for glowing effect
+const orbAnimationStyles = `
+  @keyframes orbGlow {
+    0%, 100% { filter: blur(100px) drop-shadow(0 0 60px currentColor); }
+    50% { filter: blur(100px) drop-shadow(0 0 90px currentColor); }
+  }
+  
+  @keyframes orbPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.6; }
+  }
+  
+  @keyframes orbShimmer {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  .orb-glow {
+    animation: orbGlow 4s ease-in-out infinite;
+  }
+  
+  .orb-pulse {
+    animation: orbPulse 3s ease-in-out infinite;
+  }
+  
+  .orb-shimmer {
+    animation: orbShimmer 2.5s ease-in-out infinite;
+  }
+`;
+
 const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSlide, isArticleMode }) => {
   // Memoize gradient colors to prevent recalculation
   const orbColors = useMemo(() => ({
@@ -49,15 +79,18 @@ const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSl
 
   return (
     <div className="fixed inset-0 z-0 pointer-events-none transition-all duration-1000 ease-in-out">
+      <style>{orbAnimationStyles}</style>
+      
       {/* Noise Texture */}
       <div className="absolute inset-0 opacity-[0.03]" 
            style={{ backgroundImage: noiseSvg }}>
       </div>
 
       {/* Dynamic Orbs - Position changes based on slide (Desktop) or static cool config for Mobile */}
-      <div className={`absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full blur-[100px] ${topOrbClass}`} />
+      
+      <div className={`absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full blur-[200px] ${topOrbClass} opacity-60 orb-glow orb-pulse orb-shimmer`} style={{ animation: 'orbShimmer 2s ease-in-out infinite' }} />
+      <div className={`absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full blur-[240px] ${bottomOrbClass} opacity-50 orb-glow orb-pulse orb-shimmer`} style={{ animation: 'orbShimmer 2.2s ease-in-out infinite' }} />
 
-      <div className={`absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full blur-[120px] ${bottomOrbClass}`} />
       
       {/* Grid Overlay for Tech Feel */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black_40%,transparent_100%)] opacity-20" />

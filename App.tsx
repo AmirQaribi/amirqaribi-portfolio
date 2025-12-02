@@ -12,13 +12,13 @@ import { ChevronDown } from 'lucide-react';
 const SLIDE_COUNT = 4;
 
 const getScreenSize = () => ({
-  isMobile: window.innerWidth < 1024, // Combined Mobile and Tablet (up to iPad Pro portrait)
+  isArticleMode: window.innerWidth < 1280, // Combined Mobile and Tablet (up to iPad Pro portrait)
 });
 
 const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMobile, setIsMobile] = useState(getScreenSize().isMobile);
+  const [isArticleMode, setisArticleMode] = useState(getScreenSize().isArticleMode);
   
   // Refs for scrolling on mobile/tablet
   const identityRef = useRef<HTMLDivElement>(null);
@@ -29,7 +29,7 @@ const App: React.FC = () => {
       // Debounce resize events
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
       resizeTimeoutRef.current = window.setTimeout(() => {
-        setIsMobile(getScreenSize().isMobile);
+        setisArticleMode(getScreenSize().isArticleMode);
       }, 150);
     };
 
@@ -41,7 +41,7 @@ const App: React.FC = () => {
   }, []);
 
   const changeSlide = useCallback((direction: 'next' | 'prev') => {
-    if (isAnimating || isMobile) return;
+    if (isAnimating || isArticleMode) return;
     
     setIsAnimating(true);
     setCurrentSlide(prev => {
@@ -50,10 +50,10 @@ const App: React.FC = () => {
     });
 
     setTimeout(() => setIsAnimating(false), 1000); 
-  }, [isAnimating, isMobile]);
+  }, [isAnimating, isArticleMode]);
   
   const handleNext = useCallback(() => {
-    if (!isMobile) {
+    if (!isArticleMode) {
       changeSlide('next');
     } else {
       // Smooth scroll to identity section on mobile/tablet
@@ -61,13 +61,13 @@ const App: React.FC = () => {
         identityRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
-  }, [isMobile, changeSlide]);
+  }, [isArticleMode, changeSlide]);
   
   const isScrolling = useRef(false);
   const scrollTimeoutRef = useRef<number | null>(null);
   
   const handleWheel = useCallback((e: WheelEvent) => {
-    if (isMobile || isAnimating || isScrolling.current) {
+    if (isArticleMode || isAnimating || isScrolling.current) {
       e.preventDefault();
       return;
     }
@@ -85,11 +85,11 @@ const App: React.FC = () => {
     scrollTimeoutRef.current = window.setTimeout(() => {
       isScrolling.current = false;
     }, 1100);
-  }, [isMobile, isAnimating, changeSlide]);
+  }, [isArticleMode, isAnimating, changeSlide]);
 
 
   useEffect(() => {
-    if (isMobile) {
+    if (isArticleMode) {
       isScrolling.current = false;
       return;
     }
@@ -102,27 +102,27 @@ const App: React.FC = () => {
       isScrolling.current = false;
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
-  }, [handleWheel, isMobile]);
+  }, [handleWheel, isArticleMode]);
 
   // Touch handlers for Desktop Swipe (only active if not mobile/tablet mode)
   const touchStartY = useRef(0);
   
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (isMobile) return;
+    if (isArticleMode) return;
     touchStartY.current = e.touches[0].clientY;
-  }, [isMobile]);
+  }, [isArticleMode]);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (isMobile) return;
+    if (isArticleMode) return;
     const touchEndY = e.changedTouches[0].clientY;
     const diff = touchStartY.current - touchEndY;
     if (Math.abs(diff) > 50) {
       changeSlide(diff > 0 ? 'next' : 'prev');
     }
-  }, [isMobile, changeSlide]);
+  }, [isArticleMode, changeSlide]);
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isArticleMode) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || e.key === ' ') {
         e.preventDefault();
@@ -135,30 +135,30 @@ const App: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [changeSlide, isMobile]);
+  }, [changeSlide, isArticleMode]);
   
   const animationTimeoutRef = useRef<number | null>(null);
   
   const goToSlide = useCallback((slideIndex: number) => {
-    if (isAnimating || slideIndex === currentSlide || isMobile) return;
+    if (isAnimating || slideIndex === currentSlide || isArticleMode) return;
     setIsAnimating(true);
     setCurrentSlide(slideIndex);
     if (animationTimeoutRef.current) clearTimeout(animationTimeoutRef.current);
     animationTimeoutRef.current = window.setTimeout(() => setIsAnimating(false), 1000);
-  }, [isAnimating, currentSlide, isMobile]);
+  }, [isAnimating, currentSlide, isArticleMode]);
 
   // On mobile/tablet: h-screen + overflow-y-auto + scrollbar-hide creates a scrollable container 
   // that hides the browser scrollbar while allowing scroll.
   const mainContainerClasses = useMemo(() => `relative w-full bg-fluent-bg text-white font-sans selection:bg-fluent-accent selection:text-black h-screen ${
-    !isMobile ? 'overflow-hidden' : 'overflow-y-auto scrollbar-hide'
-  }`, [isMobile]);
+    !isArticleMode ? 'overflow-hidden' : 'overflow-y-auto scrollbar-hide'
+  }`, [isArticleMode]);
 
   const slideTransformStyle = useMemo(() => ({
-    transform: !isMobile ? `translateY(-${currentSlide * 100}vh)` : undefined
-  }), [isMobile, currentSlide]);
+    transform: !isArticleMode ? `translateY(-${currentSlide * 100}vh)` : undefined
+  }), [isArticleMode, currentSlide]);
 
-  const showNavigation = useMemo(() => !isMobile, [isMobile]);
-  const showChevron = useMemo(() => !isMobile && currentSlide < SLIDE_COUNT - 1, [isMobile, currentSlide]);
+  const showNavigation = useMemo(() => !isArticleMode, [isArticleMode]);
+  const showChevron = useMemo(() => !isArticleMode && currentSlide < SLIDE_COUNT - 1, [isArticleMode, currentSlide]);
 
   return (
     <div 
@@ -168,32 +168,32 @@ const App: React.FC = () => {
     >
       <BackgroundEffects 
         activeSlide={currentSlide} 
-        isMobile={isMobile} 
+        isArticleMode={isArticleMode} 
       />
       
-      <main className={`relative z-10 w-full ${!isMobile ? 'h-full' : ''}`}>
+      <main className={`relative z-10 w-full ${!isArticleMode ? 'h-full' : ''}`}>
         <div 
-          className={`w-full ${!isMobile ? 'h-full transition-transform duration-1000 ease-in-out' : 'flex flex-col gap-y-32 pb-32'}`}
+          className={`w-full ${!isArticleMode ? 'h-full transition-transform duration-1000 ease-in-out' : 'flex flex-col gap-y-32 pb-32'}`}
           style={slideTransformStyle}
         >
           {/* Intro Section */}
           <section className="w-full h-screen flex items-center justify-center p-4 relative shrink-0">
-            <IntroSlide isActive={!isMobile ? currentSlide === 0 : true} onNext={handleNext} />
+            <IntroSlide isActive={!isArticleMode ? currentSlide === 0 : true} onNext={handleNext} />
           </section>
 
           {/* Identity Section */}
           <section ref={identityRef} className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
-            <IdentitySlide isActive={!isMobile ? currentSlide === 1 : true} data={content.identity} />
+            <IdentitySlide isActive={!isArticleMode ? currentSlide === 1 : true} data={content.identity} />
           </section>
 
           {/* Skills Section */}
           <section className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
-            <SkillsSlide isActive={!isMobile ? currentSlide === 2 : true} data={content.skills} />
+            <SkillsSlide isActive={!isArticleMode ? currentSlide === 2 : true} data={content.skills} />
           </section>
 
           {/* Contact Section */}
           <section className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
-            <ContactSlide isActive={!isMobile ? currentSlide === 3 : true} data={content.contact} />
+            <ContactSlide isActive={!isArticleMode ? currentSlide === 3 : true} data={content.contact} />
           </section>
         </div>
       </main>

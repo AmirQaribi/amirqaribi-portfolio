@@ -3,10 +3,10 @@ import React, { memo, useMemo } from 'react';
 
 interface BackgroundEffectsProps {
   activeSlide: number;
-  isMobile: boolean;
+  isArticleMode: boolean;
 }
 
-const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSlide, isMobile }) => {
+const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSlide, isArticleMode }) => {
   // Memoize gradient colors to prevent recalculation
   const orbColors = useMemo(() => ({
     top: {
@@ -24,7 +24,7 @@ const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSl
   }), []);
 
   const topOrbClass = useMemo(() => {
-    if (isMobile) return 'bg-purple-900 translate-x-0 translate-y-0 opacity-30 w-[80vw] h-[80vw]';
+    if (isArticleMode) return 'bg-purple-900 translate-x-0 translate-y-0 opacity-30 w-[80vw] h-[80vw]';
     const baseClass = 'transition-all duration-1000 opacity-40';
     const colorClass = orbColors.top[activeSlide as keyof typeof orbColors.top] || 'bg-blue-900';
     const positionClass = activeSlide === 0 ? 'translate-x-0 translate-y-0'
@@ -32,10 +32,10 @@ const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSl
       : activeSlide === 2 ? 'translate-x-10 translate-y-40'
       : 'translate-x-30 translate-y-10';
     return `${baseClass} ${colorClass} ${positionClass}`;
-  }, [activeSlide, isMobile, orbColors]);
+  }, [activeSlide, isArticleMode, orbColors]);
 
   const bottomOrbClass = useMemo(() => {
-    if (isMobile) return 'bg-cyan-800 scale-100 opacity-30 w-[90vw] h-[90vw]';
+    if (isArticleMode) return 'bg-cyan-800 scale-100 opacity-30 w-[90vw] h-[90vw]';
     const baseClass = 'transition-all duration-1000 opacity-30';
     const colorClass = orbColors.bottom[activeSlide as keyof typeof orbColors.bottom] || 'bg-gray-800';
     const scaleClass = activeSlide === 0 ? 'scale-100'
@@ -43,7 +43,7 @@ const BackgroundEffectsComponent: React.FC<BackgroundEffectsProps> = ({ activeSl
       : activeSlide === 2 ? 'scale-100'
       : 'scale-110';
     return `${baseClass} ${colorClass} ${scaleClass}`;
-  }, [activeSlide, isMobile, orbColors]);
+  }, [activeSlide, isArticleMode, orbColors]);
 
   const noiseSvg = useMemo(() => `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, []);
 

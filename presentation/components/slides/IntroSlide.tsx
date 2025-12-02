@@ -23,7 +23,7 @@ const IntroSlideComponent: React.FC<IntroSlideProps> = ({ isActive, onNext }) =>
       >
         <span className="relative z-10 flex items-center gap-3 font-medium tracking-wide text-base sm:text-lg">
           Yes, I am
-          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          <ArrowRight size={20} className="group-hover:translate-x-1 group-hover:rotate-90 transition-transform" />
         </span>
       </button>
     </div>

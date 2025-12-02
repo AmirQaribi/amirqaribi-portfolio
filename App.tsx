@@ -7,7 +7,7 @@ import { ContactSlide } from './presentation/components/slides/ContactSlide';
 import { Navigation } from './presentation/components/ui/Navigation';
 import { BackgroundEffects } from './presentation/components/ui/BackgroundEffects';
 import { content } from './core/domain/content';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const SLIDE_COUNT = 4;
 
@@ -19,9 +19,11 @@ const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isArticleMode, setisArticleMode] = useState(getScreenSize().isArticleMode);
+  const [showGoToTop, setShowGoToTop] = useState(false);
   
   // Refs for scrolling on mobile/tablet
   const identityRef = useRef<HTMLDivElement>(null);
+  const mainContainerRef = useRef<HTMLDivElement>(null);
   const resizeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -38,6 +40,17 @@ const App: React.FC = () => {
       window.removeEventListener('resize', handleResize);
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
     };
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (!mainContainerRef.current) return;
+    setShowGoToTop(mainContainerRef.current.scrollTop > 300);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    if (mainContainerRef.current) {
+      mainContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   const changeSlide = useCallback((direction: 'next' | 'prev') => {
@@ -91,6 +104,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isArticleMode) {
       isScrolling.current = false;
+      const container = mainContainerRef.current;
+      if (container) {
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+      }
       return;
     }
 
@@ -102,7 +120,7 @@ const App: React.FC = () => {
       isScrolling.current = false;
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
-  }, [handleWheel, isArticleMode]);
+  }, [handleWheel, handleScroll, isArticleMode]);
 
   // Touch handlers for Desktop Swipe (only active if not mobile/tablet mode)
   const touchStartY = useRef(0);
@@ -162,6 +180,7 @@ const App: React.FC = () => {
 
   return (
     <div 
+      ref={mainContainerRef}
       className={mainContainerClasses}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -214,6 +233,16 @@ const App: React.FC = () => {
             </div>
           )}
         </>
+      )}
+
+      {isArticleMode && showGoToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-20 bg-white/5 text-white border-white/10 p-3 rounded-full hover:opacity-80 transition-opacity shadow-lg flex items-center justify-center"
+          aria-label="Go to top"
+        >
+          <ChevronUp size={24} />
+        </button>
       )}
     </div>
   );

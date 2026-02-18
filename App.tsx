@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from "@vercel/analytics/next"
 import { IntroSlide } from './presentation/components/slides/IntroSlide';
 import { IdentitySlide } from './presentation/components/slides/IdentitySlide';
 import { SkillsSlide } from './presentation/components/slides/SkillsSlide';
@@ -244,6 +246,8 @@ const App: React.FC = () => {
           <ChevronUp size={24} />
         </button>
       )}
+      
+      <SpeedInsights />
     </div>
   );
 };

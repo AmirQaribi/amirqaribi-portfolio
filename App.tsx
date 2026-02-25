@@ -7,7 +7,7 @@ import { ContactSlide } from './presentation/components/slides/ContactSlide';
 import { Navigation } from './presentation/components/ui/Navigation';
 import { BackgroundEffects } from './presentation/components/ui/BackgroundEffects';
 import { content } from './core/domain/content';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { CloudDownload, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 
 const SLIDE_COUNT = 4;
 
@@ -238,11 +238,26 @@ const App: React.FC = () => {
       {isArticleMode && showGoToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-20 bg-white/5 text-white border-white/10 p-3 rounded-full hover:opacity-80 transition-opacity shadow-lg flex items-center justify-center"
+          className="fixed bottom-8 right-8 z-[999] p-4 bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:opacity-80  animate-slide-up flex cursor-pointer"
+          // className="fixed bottom-8 right-8 z-20 bg-white/5 text-white border-white/10 p-3 rounded-full hover:opacity-80 transition-opacity shadow-lg flex items-center justify-center"
           aria-label="Go to top"
         >
           <ChevronUp size={24} />
         </button>
+      )}
+      
+      {((isArticleMode && showGoToTop) || (!isArticleMode && currentSlide != 0)) && (
+      <a
+          href="/AmirQaribi-CV.pdf"
+          target="_blank"
+          className="fixed bottom-8 left-8 group z-[999] px-8 py-4 bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-fluent-accent/50 hover:shadow-[0_0_20px_rgba(96,205,255,0.2)] animate-slide-up flex cursor-pointer"
+          aria-label="Go to top"
+        >
+          <span className=" text-gray relative z-10 flex items-center gap-3 font-medium tracking-wide text-xs sm:text-lg">
+          <FileText size={20} className="" />
+          Download Resume
+        </span>
+        </a>
       )}
     </div>
   );

@@ -250,8 +250,10 @@ const App: React.FC = () => {
       <a
           href="/AmirQaribi-CV.pdf"
           target="_blank"
-          className="fixed bottom-8 left-8 group z-[999] px-8 py-4 bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-fluent-accent/50 hover:shadow-[0_0_20px_rgba(96,205,255,0.2)] animate-slide-up flex cursor-pointer"
-          aria-label="Go to top"
+          className={`fixed bottom-6 sm:bottom-8 group z-50 px-6 sm:px-8 py-3 sm:py-4 bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-fluent-accent/50 hover:shadow-[0_0_20px_rgba(96,205,255,0.2)] animate-slide-up flex cursor-pointer ${
+            isArticleMode ? 'left-6 sm:left-8' : 'right-6 sm:right-8'
+          }`}
+          aria-label="Download resume"
         >
           <span className=" text-gray relative z-10 flex items-center gap-3 font-medium tracking-wide text-xs sm:text-lg">
           <FileText size={20} className="" />

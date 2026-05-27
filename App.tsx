@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { IntroSlide } from './presentation/components/slides/IntroSlide';
 import { IdentitySlide } from './presentation/components/slides/IdentitySlide';
 import { SkillsSlide } from './presentation/components/slides/SkillsSlide';
@@ -277,6 +278,7 @@ const App: React.FC = () => {
         </span>
         </a>
       )}
+      <Analytics />
     </div>
   );
 };

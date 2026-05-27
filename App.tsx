@@ -12,7 +12,7 @@ import { CloudDownload, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 const SLIDE_COUNT = 4;
 
 const getScreenSize = () => ({
-  isArticleMode: window.innerWidth < 1280, // Combined Mobile and Tablet (up to iPad Pro portrait)
+  isArticleMode: window.innerWidth < 1280 || window.innerHeight < 870, // Combined Mobile and Tablet (up to iPad Pro portrait)
 });
 
 const App: React.FC = () => {

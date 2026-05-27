@@ -62,6 +62,10 @@ const ContactSlideComponent: React.FC<Props> = ({ isActive, data }) => {
           ))}
         </div>
       </div>
+      <span className="sr-only" lang="en">Amir Qaribi</span>
+      <span className="sr-only" lang="en">Amirreza Qaribi</span>
+      <span className="sr-only" lang="fa">امیر غریبی</span>
+      <span className="sr-only" lang="fa">امیررضا غریبی</span>
     </div>
   );
 };

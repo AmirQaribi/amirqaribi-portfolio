@@ -16,6 +16,10 @@ const IntroSlideComponent: React.FC<IntroSlideProps> = ({ isActive, onNext }) =>
       <h1 className="text-4xl pb-5 sm:text-5xl md:text-6xl h-25 lg:text-7xl font-light leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 text-center animate-fade-in px-4 max-w-5xl cursor-default">
         Are you looking for Amir?
       </h1>
+      <span className="sr-only" lang="en">Amir Qaribi</span>
+      <span className="sr-only" lang="en">Amirreza Qaribi</span>
+      <span className="sr-only" lang="fa">امیر غریبی</span>
+      <span className="sr-only" lang="fa">امیررضا غریبی</span>
       
       <button 
         onClick={handleClick}

@@ -73,7 +73,7 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
              </div>
              <div className="flex items-center gap-2 cursor-default">
                 <Mail size={16} className="text-gray-500 cursor-default"/>
-                <a href="mailto:{data.email}">{data.email}</a>
+                <a href={`mailto:${data.email}`}>{data.email}</a>
              </div>
           </div>
 

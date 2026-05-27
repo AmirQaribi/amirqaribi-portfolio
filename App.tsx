@@ -20,6 +20,7 @@ const App: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isArticleMode, setisArticleMode] = useState(getScreenSize().isArticleMode);
   const [showGoToTop, setShowGoToTop] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight);
   
   // Refs for scrolling on mobile/tablet
   const identityRef = useRef<HTMLDivElement>(null);
@@ -31,7 +32,9 @@ const App: React.FC = () => {
       // Debounce resize events
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
       resizeTimeoutRef.current = window.setTimeout(() => {
-        setisArticleMode(getScreenSize().isArticleMode);
+        const next = getScreenSize().isArticleMode;
+        setViewportHeight(window.innerHeight);
+        setisArticleMode(next);
       }, 150);
     };
 
@@ -41,6 +44,18 @@ const App: React.FC = () => {
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const container = mainContainerRef.current;
+    if (!container) return;
+
+    // When switching layout modes, reset scroll and force a clean reflow cycle.
+    // This prevents "partially loaded" elements that depend on layout measurement.
+    container.scrollTo({ top: 0, behavior: 'auto' });
+    requestAnimationFrame(() => {
+      setViewportHeight(window.innerHeight);
+    });
+  }, [isArticleMode]);
 
   const handleScroll = useCallback(() => {
     if (!mainContainerRef.current) return;
@@ -172,8 +187,8 @@ const App: React.FC = () => {
   }`, [isArticleMode]);
 
   const slideTransformStyle = useMemo(() => ({
-    transform: !isArticleMode ? `translateY(-${currentSlide * 100}vh)` : undefined
-  }), [isArticleMode, currentSlide]);
+    transform: !isArticleMode ? `translateY(-${currentSlide * viewportHeight}px)` : undefined
+  }), [isArticleMode, currentSlide, viewportHeight]);
 
   const showNavigation = useMemo(() => !isArticleMode, [isArticleMode]);
   const showChevron = useMemo(() => !isArticleMode && currentSlide < SLIDE_COUNT - 1, [isArticleMode, currentSlide]);
@@ -192,6 +207,7 @@ const App: React.FC = () => {
       
       <main className={`relative z-10 w-full ${!isArticleMode ? 'h-full' : ''}`}>
         <div 
+          key={isArticleMode ? 'article' : 'slides'}
           className={`w-full ${!isArticleMode ? 'h-full transition-transform duration-1000 ease-in-out' : 'flex flex-col gap-y-32 pb-32'}`}
           style={slideTransformStyle}
         >

@@ -266,8 +266,8 @@ const App: React.FC = () => {
       <a
           href="/AmirQaribi-CV.pdf"
           target="_blank"
-          className={`fixed bottom-6 sm:bottom-8 group z-50 px-6 sm:px-8 py-3 sm:py-4 bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-fluent-accent/50 hover:shadow-[0_0_20px_rgba(96,205,255,0.2)] animate-slide-up flex cursor-pointer ${
-            isArticleMode ? 'left-6 sm:left-8' : 'right-6 sm:right-8'
+          className={`fixed  sm:bottom-8 group z-50  bg-white/1 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-fluent-accent/50 hover:shadow-[0_0_20px_rgba(96,205,255,0.2)] animate-slide-up flex cursor-pointer ${
+            isArticleMode ? 'bottom-8 left-6 sm:left-8 p-4' : 'bottom-6 right-6 sm:right-8 px-6 sm:px-8 py-3 sm:py-4'
           }`}
           aria-label="Download resume"
         >

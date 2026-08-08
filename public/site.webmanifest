@@ -1,0 +1,32 @@
+{
+  "name": "AmirQaribi Portfolio",
+  "short_name": "AmirQaribi",
+  "description": "Tehran-based Senior Dynamics 365 CE & Power Platform Expert | 8+ years | 50+ rescued projects worldwide. I fix slow, broken or abandoned Dynamics 365 implementations using .NET 10, Azure, Dataverse, Power Apps, Power Automate, Power BI, AI Builder & custom plugins. Freelance & contract – available now.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "theme_color": "#0f0f0f",
+  "background_color": "#0f0f0f",
+  "categories": [
+    "art",
+    "design",
+    "entertainment"
+  ],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

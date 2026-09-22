@@ -1,4 +1,3 @@
-
 import React, { useState, memo, useCallback } from 'react';
 import { IdentityContent } from '../../../core/domain/types';
 import { Code, Cpu, Award, MapPin, Mail } from 'lucide-react';
@@ -28,103 +27,182 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
   }, []);
 
   return (
-    <div className={`w-full flex items-center justify-center transition-all duration-500 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+    <div
+      className={`w-full flex items-center justify-center transition-all duration-500 ${
+        isActive
+          ? 'opacity-100 translate-y-0'
+          : 'opacity-0 translate-y-10 pointer-events-none'
+      }`}
+    >
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-        
-        {/* Text Content - Centered on mobile/tablet if needed, or left aligned */}
+
+        {/* Text Content */}
         <div className="space-y-6 order-2 lg:order-1 text-center lg:text-left">
+
           <div className="inline-block px-3 py-1 bg-fluent-accent/10 border border-fluent-accent/20 rounded-full text-fluent-accent text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2 cursor-default">
             Profile
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight cursor-default">
-            Hello,<br/>{data.greeting}
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight cursor-default">
+            Hello,
+            <br />
+            {data.greeting}
+          </h1>
+
+          <h2 className="text-lg sm:text-xl md:text-2xl text-gray-400 font-light cursor-default">
+            {data.role}
+            <br />
+            {data.role2}
+            <br />
+            {data.role3}
           </h2>
-          <h3 className="text-lg sm:text-xl md:text-2xl text-gray-400 font-light cursor-default">
-            {data.role}<br/>{data.role2}<br/>{data.role3}
-          </h3>
+
           <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed border-l-4 border-fluent-accent pl-4 mx-auto lg:mx-0 text-left max-w-prose cursor-default">
             {data.description}
           </p>
-          
+
+          {/* Professional Stats */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4">
             {data.stats.map((stat, i) => (
-              <div key={i} className="p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm text-center transition-all duration-300 hover:bg-white/10 hover:border-fluent-accent/40 hover:shadow-lg hover:shadow-fluent-accent/20 hover:-translate-y-1 cursor-default">
-                <div className="text-lg sm:text-2xl md:text-3xl font-bold text-white cursor-default">{stat.value}</div>
-                <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wide cursor-default">{stat.label}</div>
+              <div
+                key={`${stat.label}-${i}`}
+                className="
+                  p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/10
+                  backdrop-blur-sm text-center transition-all duration-300
+                  hover:bg-white/10 hover:border-fluent-accent/40
+                  hover:shadow-lg hover:shadow-fluent-accent/20
+                  hover:-translate-y-1 cursor-default
+                "
+              >
+                <div className="text-lg sm:text-2xl md:text-3xl font-bold text-white">
+                  {stat.value}
+                </div>
+
+                <div className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-wide">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
 
+          {/* Core Strengths */}
           <div className="pt-4 flex flex-col lg:items-start items-center">
-            <h4 className="font-semibold text-base sm:text-lg mb-3 flex items-center gap-2 text-gray-200 cursor-default"><Award size={18} className="text-fluent-accent" /> Personal Skills</h4>
+            <h3 className="font-semibold text-base sm:text-lg mb-3 flex items-center gap-2 text-gray-200 cursor-default">
+              <Award size={18} className="text-fluent-accent" />
+              Core Strengths
+            </h3>
+
             <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-              {data.personalSkills.map(skill => (
-                <span key={skill} className="px-3 py-1 text-xs sm:text-sm bg-white/5 border border-white/10 rounded-full text-gray-300 cursor-default">
+              {data.personalSkills.map((skill) => (
+                <span
+                  key={skill}
+                  className="
+                    px-3 py-1 text-xs sm:text-sm bg-white/5
+                    border border-white/10 rounded-full text-gray-300 cursor-default
+                  "
+                >
                   {skill}
                 </span>
               ))}
             </div>
           </div>
-          
-          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4 text-xs sm:text-sm text-gray-400 justify-center lg:justify-start">
-             <div className="flex items-center gap-2 cursor-default">
-                <MapPin size={16} className="text-gray-500 cursor-default" />
-                {data.location}
-             </div>
-             <div className="flex items-center gap-2 cursor-default">
-                <Mail size={16} className="text-gray-500 cursor-default"/>
-                <a href={`mailto:${data.email}`}>{data.email}</a>
-             </div>
-          </div>
 
+          {/* Contact Details */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-4 text-xs sm:text-sm text-gray-400 justify-center lg:justify-start">
+
+            <div className="flex items-center gap-2 cursor-default">
+              <MapPin size={16} className="text-gray-500" />
+              {data.location}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Mail size={16} className="text-gray-500" />
+
+              <a
+                href={`mailto:${data.email}`}
+                className="hover:text-fluent-accent transition-colors"
+              >
+                {data.email}
+              </a>
+            </div>
+
+          </div>
         </div>
 
-        {/* Visual - Portrait */}
+        {/* Portrait */}
         <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
           <div
             className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            {/* Glowing background effect */}
+
+            {/* Glowing background */}
             <div className="absolute inset-0 bg-gradient-to-br from-fluent-accent/20 to-purple-600/20 rounded-full animate-pulse-slow blur-xl" />
-            
+
             {/* Image container */}
             <div className="select-none absolute inset-2 sm:inset-4 animate-float relative overflow-hidden rounded-full w-full h-full">
-              {/* Base image (fades out on hover) */}
+
+              {/* Primary portrait */}
               <img
                 src={data.imageUrl}
-                alt="Amir Qaribi"
+                alt="Amir Qaribi — Enterprise Software Engineer"
                 onContextMenu={handleContextMenu}
                 onDragStart={handleDragStart}
-                className={`select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] transition-opacity duration-200 ease-in-out ${
-                  hovered ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-              {/* Hover image (base64) */}
-              <img
-                src={data.imageHoverUrl}
-                alt="Amir hover"
-                onContextMenu={handleContextMenu}
-                onDragStart={handleDragStart}
-                className={`select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] transition-opacity duration-200 ease-in-out ${
-                  hovered ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`
+                  select-none absolute inset-0 w-full h-full object-cover rounded-full
+                  shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]
+                  transition-opacity duration-200 ease-in-out
+                  ${hovered ? 'opacity-0' : 'opacity-100'}
+                `}
               />
 
-               {/* Inner shadow/highlight */}
+              {/* Hover portrait */}
+              <img
+                src={data.imageHoverUrl}
+                alt=""
+                aria-hidden="true"
+                onContextMenu={handleContextMenu}
+                onDragStart={handleDragStart}
+                className={`
+                  select-none absolute inset-0 w-full h-full object-cover rounded-full
+                  shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]
+                  transition-opacity duration-200 ease-in-out
+                  ${hovered ? 'opacity-100' : 'opacity-0'}
+                `}
+              />
+
+              {/* Inner highlight */}
               <div className="absolute inset-0 rounded-full border-2 border-white/10 ring-1 ring-white/20 pointer-events-none" />
             </div>
-             
-            {/* Floating Icons */}
-            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce cursor-default">
-                <Code className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 cursor-default" />
+
+            {/* Floating icons */}
+            <div
+              className="
+                absolute -top-2 -right-2 sm:-top-4 sm:-right-4
+                p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl
+                border border-gray-700 shadow-xl animate-bounce cursor-default
+              "
+              aria-hidden="true"
+            >
+              <Code className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
             </div>
-            <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-bounce [animation-delay:'0.2s'] cursor-default">
-                <Cpu className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400 cursor-default" />
+
+            <div
+              className="
+                absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4
+                p-2 sm:p-3 bg-gray-900/80 backdrop-blur-md rounded-2xl
+                border border-gray-700 shadow-xl animate-bounce
+                [animation-delay:'0.2s'] cursor-default
+              "
+              aria-hidden="true"
+            >
+              <Cpu className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
             </div>
+
           </div>
         </div>
+
       </div>
     </div>
   );

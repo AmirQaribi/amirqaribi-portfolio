@@ -1,95 +1,196 @@
 import { PortfolioContent } from './types';
-import { amirPortraitBase64,amirPortraithoverBase64 } from '../../assets/images/AmirPortrait';
-
-const startYear = 2017;
-const currentYear = new Date().getFullYear();
-const yearsDif = currentYear - startYear;
-
-const yearsExp = `${yearsDif}+`;
-const solutions = `${Math.ceil(yearsDif*6 / 10) * 10}+`;
-
+import {
+  amirPortraitBase64,
+  amirPortraithoverBase64
+} from '../../assets/images/AmirPortrait';
 
 export const content: PortfolioContent = {
   intro: {
     question: "Are you looking for Amir?",
-    action: "Discover"
+    action: "Explore"
   },
+
   identity: {
     greeting: "I'm Amir Qaribi.",
-    role: "Senior Software Engineer",
-    role2: "Dynamics 365 CE Expert",
-    role3: "Backend Engineer",
-    description: "Passionate about creating innovative solutions that bridge technology and business needs. I specialize in building scalable web applications and AI-powered systems. With over four years of experience in Microsoft's CRM ecosystem, I'm an active developer and consultant for Dynamics 365, dedicated to enhancing business efficiency with top-notch technology.",
+    role: "Enterprise Software Engineer",
+    role2: "Business Systems & Backend",
+    role3: "Data & Integration",
+    description:
+      "I build and extend enterprise software with a focus on business systems, backend architecture, data, and system integration. My experience spans designing software from the ground up, working with established enterprise platforms, and turning complex organizational processes into reliable technical systems.",
     stats: [
-      { label: "Years Exp.", value: yearsExp },
-      { label: "Solutions", value: solutions },
+      { label: "Years Exp.", value: "8+" },
+      { label: "Focus", value: "Ent." },
       { label: "Clients", value: "Global" }
     ],
     personalSkills: [
       "Problem Solving",
-      "Team Leadership",
-      "Project Management",
-      "Client Communication",
-      "Agile Methodologies"
+      "Systems Thinking",
+      "Business Understanding",
+      "Technical Communication",
+      "Solution Design"
     ],
     location: "Tehran, Iran",
     email: "AmirQaribi@outlook.com",
     imageUrl: amirPortraitBase64,
     imageHoverUrl: amirPortraithoverBase64,
   },
+
   skills: {
-    title: "Technical Arsenal",
-    description: "A curated list of technologies and tools I wield to build modern, scalable, and impactful solutions.",
+    title: "Core Expertise",
+    description:
+      "Technologies and engineering disciplines I use to design, build, integrate, and maintain enterprise software systems.",
     categories: [
       {
-        name: "Power Platform",
+        name: "Enterprise Software",
         skills: [
-          { name: "Dynamics 365 CE", description: "Customization & Consulting", icon: "dynamics-365" },
-          { name: "Power Apps", description: "Custom Business Apps", icon: "power-apps" },
-          { name: "Power Automate", description: "Workflow Automation", icon: "power-automate" },
-          { name: "Power BI", description: "Data Visualization", icon: "power-bi" },
-          { name: "F&O", description: "Finance & Operations", icon: "fno" },
-          { name: "Dataverse", description: "Scalable Data Platform", icon: "dataverse" },
+          {
+            name: ".NET & C#",
+            description: "Enterprise Application Development",
+            icon: "dotnet"
+          },
+          {
+            name: "Clean Architecture",
+            description: "Maintainable System Design",
+            icon: "architecture"
+          },
+          {
+            name: "Business Systems",
+            description: "Enterprise Process & Domain Modeling",
+            icon: "dynamics-365"
+          },
+          {
+            name: "APIs & Services",
+            description: "Backend & Service Architecture",
+            icon: "compute"
+          },
+          {
+            name: "Authentication",
+            description: "JWT, Sessions & Access Control",
+            icon: "security"
+          },
+          {
+            name: "Testing",
+            description: "Unit & Integration Testing",
+            icon: "test"
+          }
         ]
       },
+
       {
-        name: "Azure Services",
+        name: "Data & SQL",
         skills: [
-          { name: "Entra & Azure AD", description: "Identity Management", icon: "entra" },
-          { name: "Compute & DevOps", description: "CI/CD & App Services", icon: "compute" },
-          { name: "Analytics & Databases", description: "Data Solutions", icon: "analytics" },
-          { name: "Networking", description: "Secure Connections", icon: "networking" },
-          { name: "Cognitive & ML", description: "AI-Powered Services", icon: "cognitive" },
-          { name: "Security & Identity", description: "Protection & Governance", icon: "security" },
+          {
+            name: "SQL Server",
+            description: "Relational Data & Query Design",
+            icon: "sqlserver"
+          },
+          {
+            name: "Entity Framework Core",
+            description: "Data Access & ORM",
+            icon: "sqlserver"
+          },
+          {
+            name: "Data Modeling",
+            description: "Relationships, Constraints & Integrity",
+            icon: "dataverse"
+          },
+          {
+            name: "Elasticsearch",
+            description: "Full-Text Search & Indexing",
+            icon: "search"
+          },
+          {
+            name: "Data Integration",
+            description: "Enterprise Data Flows",
+            icon: "analytics"
+          },
+          {
+            name: "File & Document Data",
+            description: "Storage, Metadata & Content",
+            icon: "onedrive"
+          }
         ]
       },
+
       {
-        name: "Backend Development",
+        name: "Systems Integration",
         skills: [
-          { name: ".NET Ecosystem & C#", description: "Robust Backend Logic", icon: "dotnet" },
-          { name: "SQL Server & EF Core", description: "Database Management", icon: "sqlserver" },
-          { name: "Testing", description: "Unit & Integration Tests", icon: "test" },
-          { name: "Search Engines", description: "Elasticsearch, Analytics", icon: "search" },
-          { name: "Design Patterns", description: "Architecture & Best Practices", icon: "architecture" },
-          { name: "Graph API", description: "Microsoft 365 Integration", icon: "graph-api" },
+          {
+            name: "REST APIs",
+            description: "System-to-System Integration",
+            icon: "graph-api"
+          },
+          {
+            name: "Microsoft Graph",
+            description: "Microsoft 365 Integration",
+            icon: "graph-api"
+          },
+          {
+            name: "Power Automate",
+            description: "Business Process Automation",
+            icon: "power-automate"
+          },
+          {
+            name: "Dynamics 365",
+            description: "Enterprise CRM & Business Systems",
+            icon: "dynamics-365"
+          },
+          {
+            name: "Microsoft 365",
+            description: "Enterprise Platform Integration",
+            icon: "teams"
+          },
+          {
+            name: "Azure",
+            description: "Cloud Services & Infrastructure",
+            icon: "compute"
+          }
         ]
       },
+
       {
-        name: "Microsoft 365",
+        name: "Microsoft Platforms",
         skills: [
-          { name: "OneDrive", description: "Cloud Storage & Sync", icon: "onedrive" },
-          { name: "SharePoint", description: "Admin & Collaboration", icon: "sharepoint" },
-          { name: "MS Teams", description: "Development & Comms", icon: "teams" },
-          { name: "MS Project", description: "Project Management", icon: "project" },
-          { name: "MS Loop & Lists", description: "Fluid Collaboration", icon: "loop" },
-          { name: "Outlook & Exchange", description: "Email & Calendaring", icon: "outlook" },
+          {
+            name: "Dynamics 365 CE",
+            description: "CRM Customization & Development",
+            icon: "dynamics-365"
+          },
+          {
+            name: "Dataverse",
+            description: "Business Data Platform",
+            icon: "dataverse"
+          },
+          {
+            name: "SharePoint",
+            description: "Content & Collaboration",
+            icon: "sharepoint"
+          },
+          {
+            name: "Microsoft Teams",
+            description: "Collaboration & Integration",
+            icon: "teams"
+          },
+          {
+            name: "Microsoft 365",
+            description: "Enterprise Productivity Platform",
+            icon: "outlook"
+          },
+          {
+            name: "Azure & Entra",
+            description: "Cloud & Identity Services",
+            icon: "entra"
+          }
         ]
       }
     ]
   },
+
   contact: {
     title: "Let's Work Together",
-    description: "Have a project in mind or just want to connect? Feel free to reach out.",
+    description:
+      "Have an enterprise software project, integration challenge, or technical problem to discuss? Feel free to reach out.",
+
     links: [
       {
         type: 'email',
@@ -113,6 +214,7 @@ export const content: PortfolioContent = {
         icon: 'coffee'
       }
     ],
+
     socials: [
       {
         type: 'linkedin',
@@ -130,5 +232,5 @@ export const content: PortfolioContent = {
         icon: 'instagram'
       }
     ]
-  },
+  }
 };

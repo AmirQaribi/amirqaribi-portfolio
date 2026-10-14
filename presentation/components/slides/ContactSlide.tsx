@@ -47,10 +47,22 @@ const ContactSlideComponent: React.FC<Props> = ({ isActive, data }) => {
             style={{ transitionDelay: `${100 + idx * 100}ms` }}
           >
             <div className="p-3 sm:p-4 bg-fluent-accent/10 rounded-full mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
-              <DynamicIcon
-                name={item.icon}
-                className="w-6 h-6 sm:w-8 sm:h-8 text-fluent-accent"
-              />
+              {item.icon === 'coffee' ? (
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-fluent-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <g className="coffee-cup">
+                    {/* Keep the existing cup shape while animating the steam separately. */}
+                    <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1" />
+                  </g>
+                  <path className="coffee-steam" d="M6 5c-1-1 1-2 0-3" />
+                  <path className="coffee-steam" d="M10 5c-1-1 1-2 0-3" />
+                  <path className="coffee-steam" d="M14 5c-1-1 1-2 0-3" />
+                </svg>
+              ) : (
+                <DynamicIcon
+                  name={item.icon}
+                  className="w-6 h-6 sm:w-8 sm:h-8 text-fluent-accent"
+                />
+              )}
             </div>
 
             <h3 className="text-base sm:text-lg font-semibold mb-1 text-white">

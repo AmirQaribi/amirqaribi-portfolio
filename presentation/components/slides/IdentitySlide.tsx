@@ -44,10 +44,12 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
     const eyePaths = portrait.querySelectorAll<SVGPathElement>('[data-eye-opening]');
 
     const updateEyelids = () => {
-      // Apply the same opening to the iris clip and visible lid outline in both portraits.
+      // Combine the relaxed or happy expression with gaze and blink closure.
       eyePaths.forEach((path) => {
-        const eye = eyes[Number(path.dataset.eyeOpening)];
-        path.setAttribute('d', getEyeOpeningPath(eye, gazeOpenness * (1 - blinkAmount)));
+        const eyeIndex = Number(path.dataset.eyeOpening);
+        const eye = eyes[eyeIndex];
+        const moodOpenness = eyeIndex < 2 ? 0.88 : 1.12;
+        path.setAttribute('d', getEyeOpeningPath(eye, (gazeOpenness + moodOpenness - 1) * (1 - blinkAmount)));
       });
     };
 
@@ -250,7 +252,14 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
             <div className="absolute inset-0 bg-gradient-to-br from-fluent-accent/20 to-purple-600/20 rounded-full animate-pulse-slow blur-xl" />
 
             {/* Image container */}
-            <div ref={portraitRef} className="select-none absolute inset-2 sm:inset-4 animate-float relative overflow-hidden rounded-full w-full h-full">
+            <div className="select-none absolute inset-2 sm:inset-4 relative overflow-hidden rounded-full w-full h-full">
+              {/* Move the character inside the fixed circular window. */}
+              <div
+                ref={portraitRef}
+                data-hovered={hovered}
+                className="portrait-motion absolute inset-0"
+                style={{ animationPlayState: isActive ? 'running' : 'paused' }}
+              >
 
               {/* Match each eye opening to its original 1024px portrait. */}
               {[
@@ -275,7 +284,7 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
                     aria-hidden={portraitIndex === 1 ? true : undefined}
                     onContextMenu={handleContextMenu}
                     onDragStart={handleDragStart}
-                    className="select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]"
+                    className="select-none absolute inset-0 w-full h-full object-cover shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]"
                   />
                   <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1024 1024" aria-hidden="true">
                     <defs>
@@ -287,6 +296,11 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
                         <stop offset="0%" stopColor="#171313" />
                         <stop offset="100%" stopColor="#3b3131" />
                       </radialGradient>
+                      {portraitIndex === 0 && (
+                        <clipPath id={`${eyeId}-mouth`}>
+                          <ellipse cx="512" cy="455" rx="70" ry="34" />
+                        </clipPath>
+                      )}
                       {portrait.eyes.map((eye, eyeIndex) => (
                         <React.Fragment key={eyeIndex}>
                           <linearGradient id={`${eyeId}-lid-${portraitIndex}-${eyeIndex}`} gradientUnits="userSpaceOnUse" x1="0" y1={eye.y - 24} x2="0" y2={eye.y + 20}>
@@ -295,7 +309,7 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
                             <stop offset="100%" stopColor={eye.skin} />
                           </linearGradient>
                           <clipPath id={`${eyeId}-eye-${portraitIndex}-${eyeIndex}`}>
-                            <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, 1)} />
+                            <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, portraitIndex === 0 ? 0.88 : 1.12)} />
                           </clipPath>
                         </React.Fragment>
                       ))}
@@ -312,12 +326,21 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
                             <ellipse cx={eye.x - 4} cy={eye.y - 5} rx="2.5" ry="2" fill="#c4b4a5" opacity="0.65" />
                           </g>
                         </g>
-                        <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, 1)} fill="none" stroke="#171313" strokeWidth="2.5" strokeLinejoin="round" />
+                        <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, portraitIndex === 0 ? 0.88 : 1.12)} fill="none" stroke="#171313" strokeWidth="2.5" strokeLinejoin="round" />
                       </g>
                     ))}
+                    {portraitIndex === 0 && (
+                      <g clipPath={`url(#${eyeId}-mouth)`}>
+                        {/* Animate the original lip texture inside a fixed mouth area. */}
+                        <g className="portrait-mouth" style={{ animationPlayState: isActive && !hovered ? 'running' : 'paused' }}>
+                          <image href={data.imageUrl} width="1024" height="1024" />
+                        </g>
+                      </g>
+                    )}
                   </svg>
                 </div>
               ))}
+              </div>
 
               {/* Inner highlight */}
               <div className="absolute inset-0 rounded-full border-2 border-white/10 ring-1 ring-white/20 pointer-events-none" />

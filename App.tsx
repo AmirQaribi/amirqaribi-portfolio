@@ -10,13 +10,15 @@ import { content } from './core/domain/content';
 import { CloudDownload, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 
 const SLIDE_COUNT = 4;
+const SECTION_IDS = ['intro', 'about', 'skills', 'contact'];
 
 const getScreenSize = () => ({
   isArticleMode: window.innerWidth < 1280 || window.innerHeight < 870, // Combined Mobile and Tablet (up to iPad Pro portrait)
 });
 
 const App: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // Select the linked section before rendering the desktop slide layout.
+  const [currentSlide, setCurrentSlide] = useState(() => Math.max(0, SECTION_IDS.indexOf(window.location.hash.slice(1))));
   const [isAnimating, setIsAnimating] = useState(false);
   const [isArticleMode, setisArticleMode] = useState(getScreenSize().isArticleMode);
   const [showGoToTop, setShowGoToTop] = useState(false);
@@ -55,6 +57,30 @@ const App: React.FC = () => {
     requestAnimationFrame(() => {
       setViewportHeight(window.innerHeight);
     });
+  }, [isArticleMode]);
+
+  useEffect(() => {
+    let frame = 0;
+    const handleHashChange = () => {
+      const sectionIndex = Math.max(0, SECTION_IDS.indexOf(window.location.hash.slice(1)));
+      setCurrentSlide(sectionIndex);
+      cancelAnimationFrame(frame);
+      // Align the section after layout updates; desktop slides must not also scroll.
+      frame = requestAnimationFrame(() => {
+        if (isArticleMode) {
+          document.getElementById(SECTION_IDS[sectionIndex])?.scrollIntoView({ behavior: 'auto', block: 'start' });
+        } else {
+          mainContainerRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+        }
+      });
+    };
+
+    if (window.location.hash) handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      cancelAnimationFrame(frame);
+    };
   }, [isArticleMode]);
 
   const handleScroll = useCallback(() => {
@@ -212,22 +238,22 @@ const App: React.FC = () => {
           style={slideTransformStyle}
         >
           {/* Intro Section */}
-          <section className="w-full h-screen flex items-center justify-center p-4 relative shrink-0">
+          <section id="intro" className="w-full h-screen flex items-center justify-center p-4 relative shrink-0">
             <IntroSlide isActive={!isArticleMode ? currentSlide === 0 : true} onNext={handleNext} />
           </section>
 
           {/* Identity Section */}
-          <section ref={identityRef} className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
+          <section id="about" ref={identityRef} className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
             <IdentitySlide isActive={!isArticleMode ? currentSlide === 1 : true} data={content.identity} />
           </section>
 
           {/* Skills Section */}
-          <section className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
+          <section id="skills" className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
             <SkillsSlide isActive={!isArticleMode ? currentSlide === 2 : true} data={content.skills} />
           </section>
 
           {/* Contact Section */}
-          <section className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
+          <section id="contact" className="w-full min-h-screen flex items-center justify-center p-4 sm:p-8 relative shrink-0">
             <ContactSlide isActive={!isArticleMode ? currentSlide === 3 : true} data={content.contact} />
           </section>
         </div>

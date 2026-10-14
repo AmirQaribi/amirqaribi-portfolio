@@ -135,6 +135,6 @@ I'd love to hear from you! Visit my portfolio at [amirqaribi.ir](https://amirqar
 
 **Made with ❤️ by Amir Qaribi**
 
-*With help from Gemini, GitHub Copilot, and great friends*
+*With help from ChatGPT, Gemini, GitHub Copilot, and great friends*
 
 </div>

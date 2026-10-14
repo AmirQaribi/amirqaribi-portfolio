@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useId, memo, useCallback } from 'react';
 import { IdentityContent } from '../../../core/domain/types';
 import { Code, Cpu, Award, MapPin, Mail } from 'lucide-react';
 
@@ -7,8 +7,117 @@ interface Props {
   data: IdentityContent;
 }
 
+// Eye coordinates and skin tones match the two original 1024px portraits.
+const PORTRAIT_EYES = [
+  [
+    { x: 435, y: 338, leftX: 406, leftY: 347, rightX: 466, rightY: 335, topY: 325, bottomY: 355, closedY: 352, shade: '#bc847b', skin: '#efbb99' },
+    { x: 574, y: 329, leftX: 543, leftY: 330, rightX: 605, rightY: 335, topY: 313, bottomY: 344, closedY: 340, shade: '#b77c72', skin: '#cf917d' },
+  ],
+  [
+    { x: 428, y: 332, leftX: 399, leftY: 342, rightX: 459, rightY: 330, topY: 316, bottomY: 349, closedY: 346, shade: '#bb8478', skin: '#ecb895' },
+    { x: 566, y: 323, leftX: 535, leftY: 323, rightX: 596, rightY: 327, topY: 308, bottomY: 334, closedY: 331, shade: '#b77f72', skin: '#cc8d7a' },
+  ],
+];
+
+const getEyeOpeningPath = (eye: typeof PORTRAIT_EYES[number][number], openness: number) => {
+  // Keep both corners fixed while the upper and lower lids meet along the closing curve.
+  const topY = eye.closedY + (eye.topY - eye.closedY) * openness;
+  const bottomY = eye.closedY + (eye.bottomY - eye.closedY) * openness;
+  return `M${eye.leftX} ${eye.leftY} Q${eye.x} ${topY} ${eye.rightX} ${eye.rightY} Q${eye.x} ${bottomY} ${eye.leftX} ${eye.leftY}Z`;
+};
+
 const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
   const [hovered, setHovered] = useState(false);
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const eyeId = useId();
+
+  useEffect(() => {
+    const portrait = portraitRef.current;
+    if (!portrait || !isActive) return;
+
+    let frame = 0;
+    let blinkFrame = 0;
+    let blinkTimer = 0;
+    let gazeOpenness = 1;
+    let blinkAmount = 0;
+    const eyes = PORTRAIT_EYES.flat();
+    const eyePaths = portrait.querySelectorAll<SVGPathElement>('[data-eye-opening]');
+
+    const updateEyelids = () => {
+      // Apply the same opening to the iris clip and visible lid outline in both portraits.
+      eyePaths.forEach((path) => {
+        const eye = eyes[Number(path.dataset.eyeOpening)];
+        path.setAttribute('d', getEyeOpeningPath(eye, gazeOpenness * (1 - blinkAmount)));
+      });
+    };
+
+    const scheduleBlink = () => {
+      blinkTimer = window.setTimeout(() => {
+        const bounds = portrait.getBoundingClientRect();
+        if (document.hidden || bounds.bottom <= 0 || bounds.top >= window.innerHeight) {
+          scheduleBlink();
+          return;
+        }
+
+        const started = performance.now();
+        const animateBlink = (now: number) => {
+          const elapsed = now - started;
+          // Close in 70ms, pause briefly, then reopen more gently over 130ms.
+          blinkAmount = elapsed < 70 ? elapsed / 70 : elapsed < 105 ? 1 : Math.max(0, 1 - (elapsed - 105) / 130);
+          updateEyelids();
+          if (elapsed < 235) {
+            blinkFrame = requestAnimationFrame(animateBlink);
+          } else {
+            scheduleBlink();
+          }
+        };
+        blinkFrame = requestAnimationFrame(animateBlink);
+      }, 2000 + Math.random() * 1000);
+    };
+
+    const resetEyes = () => {
+      cancelAnimationFrame(frame);
+      portrait.style.removeProperty('--eye-x');
+      portrait.style.removeProperty('--eye-y');
+      gazeOpenness = 1;
+      updateEyelids();
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const bounds = portrait.getBoundingClientRect();
+        if (!bounds.width || !bounds.height) return;
+
+        // Measure the cursor from the eyes in proportion to the responsive portrait.
+        const x = (event.clientX - bounds.left - bounds.width * 0.49) / (bounds.width * 0.75);
+        const y = (event.clientY - bounds.top - bounds.height * 0.325) / (bounds.height * 0.75);
+        // Keep the pupils inside a small ellipse, even when the cursor is far away.
+        const distance = Math.max(1, Math.hypot(x, y));
+        portrait.style.setProperty('--eye-x', `${(x / distance) * 12}px`);
+        portrait.style.setProperty('--eye-y', `${(y / distance) * 6}px`);
+        // Raise the upper lid when looking up and narrow the eye when looking down.
+        gazeOpenness = 1 - (y / distance) * 0.35;
+        updateEyelids();
+      });
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    document.documentElement.addEventListener('pointerleave', resetEyes);
+    window.addEventListener('blur', resetEyes);
+    scheduleBlink();
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      document.documentElement.removeEventListener('pointerleave', resetEyes);
+      window.removeEventListener('blur', resetEyes);
+      window.clearTimeout(blinkTimer);
+      cancelAnimationFrame(blinkFrame);
+      blinkAmount = 0;
+      resetEyes();
+    };
+  }, [isActive]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -141,36 +250,74 @@ const IdentitySlideComponent: React.FC<Props> = ({ isActive, data }) => {
             <div className="absolute inset-0 bg-gradient-to-br from-fluent-accent/20 to-purple-600/20 rounded-full animate-pulse-slow blur-xl" />
 
             {/* Image container */}
-            <div className="select-none absolute inset-2 sm:inset-4 animate-float relative overflow-hidden rounded-full w-full h-full">
+            <div ref={portraitRef} className="select-none absolute inset-2 sm:inset-4 animate-float relative overflow-hidden rounded-full w-full h-full">
 
-              {/* Primary portrait */}
-              <img
-                src={data.imageUrl}
-                alt="Amir Qaribi — Enterprise Software Engineer"
-                onContextMenu={handleContextMenu}
-                onDragStart={handleDragStart}
-                className={`
-                  select-none absolute inset-0 w-full h-full object-cover rounded-full
-                  shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]
-                  transition-opacity duration-200 ease-in-out
-                  ${hovered ? 'opacity-0' : 'opacity-100'}
-                `}
-              />
-
-              {/* Hover portrait */}
-              <img
-                src={data.imageHoverUrl}
-                alt=""
-                aria-hidden="true"
-                onContextMenu={handleContextMenu}
-                onDragStart={handleDragStart}
-                className={`
-                  select-none absolute inset-0 w-full h-full object-cover rounded-full
-                  shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]
-                  transition-opacity duration-200 ease-in-out
-                  ${hovered ? 'opacity-100' : 'opacity-0'}
-                `}
-              />
+              {/* Match each eye opening to its original 1024px portrait. */}
+              {[
+                {
+                  src: data.imageUrl,
+                  visible: !hovered,
+                  eyes: PORTRAIT_EYES[0],
+                },
+                {
+                  src: data.imageHoverUrl,
+                  visible: hovered,
+                  eyes: PORTRAIT_EYES[1],
+                },
+              ].map((portrait, portraitIndex) => (
+                <div
+                  key={portraitIndex}
+                  className={`absolute inset-0 transition-opacity duration-200 ease-in-out ${portrait.visible ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  <img
+                    src={portrait.src}
+                    alt={portraitIndex === 0 ? 'Amir Qaribi — Enterprise Software Engineer' : ''}
+                    aria-hidden={portraitIndex === 1 ? true : undefined}
+                    onContextMenu={handleContextMenu}
+                    onDragStart={handleDragStart}
+                    className="select-none absolute inset-0 w-full h-full object-cover rounded-full shadow-2xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)]"
+                  />
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1024 1024" aria-hidden="true">
+                    <defs>
+                      {/* Blend the skin overlay into the original portrait around the lids. */}
+                      <filter id={`${eyeId}-lid-soften-${portraitIndex}`}>
+                        <feGaussianBlur stdDeviation="1.2" />
+                      </filter>
+                      <radialGradient id={`${eyeId}-iris-${portraitIndex}`} cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" stopColor="#171313" />
+                        <stop offset="100%" stopColor="#3b3131" />
+                      </radialGradient>
+                      {portrait.eyes.map((eye, eyeIndex) => (
+                        <React.Fragment key={eyeIndex}>
+                          <linearGradient id={`${eyeId}-lid-${portraitIndex}-${eyeIndex}`} gradientUnits="userSpaceOnUse" x1="0" y1={eye.y - 24} x2="0" y2={eye.y + 20}>
+                            <stop offset="0%" stopColor={eye.skin} />
+                            <stop offset="50%" stopColor={eye.shade} />
+                            <stop offset="100%" stopColor={eye.skin} />
+                          </linearGradient>
+                          <clipPath id={`${eyeId}-eye-${portraitIndex}-${eyeIndex}`}>
+                            <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, 1)} />
+                          </clipPath>
+                        </React.Fragment>
+                      ))}
+                    </defs>
+                    {portrait.eyes.map((eye, eyeIndex) => (
+                      <g key={eyeIndex}>
+                        {/* Cover the original bitmap eye so it stays hidden during a blink. */}
+                        <path d={getEyeOpeningPath(eye, 1.8)} fill={`url(#${eyeId}-lid-${portraitIndex}-${eyeIndex})`} stroke={`url(#${eyeId}-lid-${portraitIndex}-${eyeIndex})`} strokeWidth="7" filter={`url(#${eyeId}-lid-soften-${portraitIndex})`} />
+                        <g clipPath={`url(#${eyeId}-eye-${portraitIndex}-${eyeIndex})`}>
+                          <rect x={eye.leftX} y={eye.y - 32} width={eye.rightX - eye.leftX} height="64" fill="#e9e4da" />
+                          <g style={{ transform: 'translate(var(--eye-x, 0px), var(--eye-y, 0px))', transition: 'transform 100ms ease-out' }}>
+                            <circle cx={eye.x} cy={eye.y} r="14" fill={`url(#${eyeId}-iris-${portraitIndex})`} stroke="#171313" strokeWidth="2" />
+                            <circle cx={eye.x} cy={eye.y - 1} r="6" fill="#080909" />
+                            <ellipse cx={eye.x - 4} cy={eye.y - 5} rx="2.5" ry="2" fill="#c4b4a5" opacity="0.65" />
+                          </g>
+                        </g>
+                        <path data-eye-opening={portraitIndex * 2 + eyeIndex} d={getEyeOpeningPath(eye, 1)} fill="none" stroke="#171313" strokeWidth="2.5" strokeLinejoin="round" />
+                      </g>
+                    ))}
+                  </svg>
+                </div>
+              ))}
 
               {/* Inner highlight */}
               <div className="absolute inset-0 rounded-full border-2 border-white/10 ring-1 ring-white/20 pointer-events-none" />

@@ -225,11 +225,6 @@ export const content: PortfolioContent = {
         type: 'github',
         link: 'https://github.com/amirqaribi',
         icon: 'github'
-      },
-      {
-        type: 'instagram',
-        link: 'https://instagram.com/_amirqaribi/',
-        icon: 'instagram'
       }
     ]
   }
